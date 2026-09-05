@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090e15">
+<meta name="description" content="TapThrough 校園文件機手機無障礙互動原型。">
+<title>TapThrough · 校園文件機</title>
+<style>/* STYLES */</style>
+</head>
+<body>
+<a class="skip" href="#step-title">跳到目前步驟</a>
+<header class="top"><span class="brand">TapThrough<span class="brand-dot" aria-hidden="true">●</span></span><button id="settings-open" type="button">設定</button></header>
+<div class="mode-label" id="mode-label"></div>
+<div class="private-banner" id="private-banner" hidden><strong>隱私模式</strong><p>敏感資訊不會顯示在螢幕上。螢幕閱讀器仍可操作。</p><button id="private-exit" type="button">關閉隱私模式</button></div>
+<div id="surface">
+<div class="journey"><p id="screen-label"></p><div class="progress-track" id="progress-track" aria-hidden="true"></div><p id="clock" class="muted"></p></div>
+<p id="swipe-hint" class="note" hidden></p>
+<main id="main" aria-labelledby="step-title" aria-describedby="swipe-hint"></main>
+<nav class="guide-controls" aria-label="語音引導"><button type="button" id="replay">重播本段</button><button type="button" id="speech-stop">停止語音</button></nav>
+<details class="machine-progress"><summary>查看機台 12 畫面進度</summary><ol id="screen-list"></ol></details>
+<details id="demo-panel" hidden><summary>Demo controls · 僅供模擬</summary><p>DEMO ONLY：下列控制不會操作或收取真實款項。</p><div id="demo-actions" class="stack"></div></details>
+<footer><p id="offline-status">本頁可儲存為單一 HTML，離線開啟。</p><p>Prototype 測試資料 · 未連接學校或實體機台</p></footer>
+</div>
+<dialog id="settings" aria-labelledby="settings-title">
+  <h2 id="settings-title" tabindex="-1">設定</h2>
+  <button type="button" id="settings-close">返回操作</button>
+  <label class="check"><input type="checkbox" id="swipe">直接滑動切換（Demo）</label>
+  <p class="muted" id="swipe-setting-note">內容區向左滑前進、向右滑返回，上下滑捲動。使用 VoiceOver／TalkBack 時請關閉此選項。</p>
+  <label class="check"><input type="checkbox" id="tts">Demo 語音導覽（預設關閉）</label>
+  <p class="muted">使用 VoiceOver／TalkBack 時建議關閉，避免雙重朗讀。開啟後會播放目前引導。</p>
+  <label for="rate">語速 <output id="rate-value">0.95</output></label><input id="rate" type="range" min="0.7" max="1.2" step="0.05" value="0.95">
+  <fieldset><legend>引導版本</legend><label class="check"><input type="radio" name="version" value="A">A 版 · 絕對距離</label><label class="check"><input type="radio" name="version" value="B" checked>B 版 · 相對觸覺</label></fieldset>
+  <p class="muted">所有引導距離維持【待填】，待現場量測確認後由團隊更新。</p>
+  <label class="check"><input id="private" type="checkbox">隱私模式／黑屏</label>
+  <label class="check"><input id="contrast" type="checkbox">高對比</label>
+  <label class="check"><input id="large" type="checkbox">較大文字</label>
+  <details><summary>實測值輸入</summary><p>只記錄機台尺寸，不儲存身分或交易資料。尺寸不會自動填入語音距離。</p>
+  <label for="measure-w">螢幕寬（公分）</label><input id="measure-w" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="【待填】">
+  <label for="measure-h">螢幕高（公分）</label><input id="measure-h" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="【待填】">
+  <label for="measure-floor">螢幕下緣離地高度（公分，選填）</label><input id="measure-floor" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="【待填】">
+  <p id="measure-note" role="status"></p></details>
+  <details><summary>關於 TapThrough</summary><p>讓機台流程回到你熟悉的手機上。本次以測試資料模擬身分驗證、付款與列印。手機提供操作及引導，實體機台負責收款與取件。</p></details>
+  <button type="button" id="restart">重新開始</button>
+</dialog>
+<dialog id="reset-dialog" aria-labelledby="reset-title"><h2 id="reset-title">重新開始？</h2><p>將清除本次選擇。如果已在實體機台投幣，請先確認機台狀態；此操作不會取消付款或退款。</p><button id="reset-cancel" type="button" autofocus>繼續目前操作</button><button id="reset-confirm" type="button">清除並重新開始</button></dialog>
+<div class="sr-only" id="announcer" aria-live="polite" aria-atomic="true"></div>
+<div class="sr-only" id="error-announcer" role="alert" aria-atomic="true"></div>
+<noscript>此互動原型需要 JavaScript。請啟用後重新開啟。</noscript>
+<script>/* SCRIPTS */</script>
+</body></html>

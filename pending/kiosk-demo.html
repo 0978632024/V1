@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>校園多媒體服務系統 Demo</title>
+<style>
+  :root{
+    --green1:#33c435; --green2:#7ee87e; --green3:#49d449;
+    --red:#c40000; --yellow:#ffe600; --navy:#17337f; --gold:#f0c02a;
+    --bar:#a81616;
+    --ink:#10240f;
+    --safe-b:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{font-size:clamp(14px,4.1vw,18px)}
+  html,body{margin:0;height:100%;overscroll-behavior:none}
+  body{
+    background:#141414;
+    font-family:"DFKai-SB","BiauKai","Kaiti TC","Noto Serif TC","Songti TC",serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .app{
+    height:100dvh;height:100vh;
+    max-width:520px;margin:0 auto;
+    display:flex;flex-direction:column;
+    background:linear-gradient(160deg,var(--green1),var(--green2) 58%,var(--green3));
+    overflow:hidden;position:relative;
+  }
+
+  /* ---------- 頂列 ---------- */
+  .topbar{
+    flex:none;background:linear-gradient(180deg,#c31d1d,var(--bar));
+    color:#fff;display:flex;align-items:center;gap:.5rem;
+    padding:calc(env(safe-area-inset-top,0px) + .45rem) .7rem .45rem;
+    box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:6;
+  }
+  .brand{flex:1;min-width:0;line-height:1.15}
+  .brand b{display:block;font-size:.95rem;letter-spacing:.04em}
+  .brand small{display:block;font-size:.6rem;opacity:.75;font-family:"Times New Roman",serif;letter-spacing:.02em}
+  .cd{display:flex;align-items:center;gap:.3rem;flex:none}
+  .cd em{font-style:normal;font-size:.6rem;opacity:.85}
+  .cd b{background:#3fbde8;color:#001;border:1px solid #fff6;border-radius:4px;
+        padding:.05rem .35rem;font-size:.9rem;font-family:ui-monospace,monospace;min-width:2.6rem;text-align:center}
+  .eject{flex:none;width:2.3rem;height:2.3rem;border-radius:50%;border:2px solid #fff;
+         background:#fff;color:var(--red);font-family:inherit;font-weight:700;
+         font-size:.62rem;line-height:1.05;cursor:pointer}
+
+  /* ---------- 進度 ---------- */
+  .rail{flex:none;height:4px;background:rgba(0,0,0,.18)}
+  .rail i{display:block;height:100%;background:var(--yellow);width:0;transition:width .28s linear}
+
+  /* ---------- 訂單列 ---------- */
+  .order{flex:none;overflow:hidden;max-height:0;transition:max-height .28s ease}
+  .order.on{max-height:6rem}
+  .order table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:.72rem}
+  .order th{background:var(--yellow);border:1px solid #5a5a3a;padding:.2rem;font-weight:700}
+  .order td{background:var(--navy);color:#fff;border:1px solid #223;padding:.35rem .4rem;
+            overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .order col.a{width:auto}.order col.b{width:3.4rem}.order col.c{width:4rem}
+
+  /* ---------- 舞台（滑動區） ---------- */
+  .stage{flex:1;position:relative;overflow:hidden;touch-action:pan-y}
+  .card{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+        padding:.9rem .8rem 1rem;display:flex;flex-direction:column;gap:.75rem;will-change:transform}
+  .card.anim{transition:transform .26s linear}
+
+  .h1{text-align:center;line-height:1.3}
+  .h1 .zh{color:#062c78;font-size:1.25rem;font-weight:700}
+  .h1 .en{color:#000;font-size:.78rem;font-family:"Times New Roman",serif}
+  .lead{color:var(--red);text-align:center;font-size:.82rem;line-height:1.5}
+
+  /* 大選項（語言 / 身分） */
+  .big{display:flex;flex-direction:column;gap:.9rem;margin-top:.5rem}
+  .bigbtn{
+    border:3px solid #0d3b6b;border-radius:999px;
+    background:linear-gradient(180deg,#93d2f8,#3b83c9 48%,#1a4f8c);
+    color:#fff;text-shadow:1px 1px 2px #000;font-family:inherit;
+    padding:1.05rem;cursor:pointer;
+    box-shadow:inset 0 3px 5px rgba(255,255,255,.45),0 3px 5px rgba(0,0,0,.3);
+  }
+  .bigbtn .zh{display:block;font-size:1.4rem;font-weight:700;letter-spacing:.1em}
+  .bigbtn .en{display:block;font-size:.8rem;font-family:"Times New Roman",serif;opacity:.95}
+  .bigbtn:active{transform:translateY(2px);filter:brightness(.94)}
+
+  .poster{border:3px solid #fff;border-radius:6px;height:9rem;position:relative;overflow:hidden;
+          background:linear-gradient(165deg,#6f9ec6,#a8c98c 55%,#4e7d4e);flex:none}
+  .poster::after{content:"校園入口意象";position:absolute;left:0;right:0;bottom:.4rem;text-align:center;
+                 color:#fff;font-size:.72rem;text-shadow:0 0 6px #000}
+
+  /* 清單 */
+  .list{display:flex;flex-direction:column;gap:.4rem}
+  .row{
+    background:#f4f4fa;border:1px solid #9aa;border-radius:6px;padding:.6rem .7rem;
+    cursor:pointer;display:flex;gap:.6rem;align-items:center;
+  }
+  .row .nm{flex:1;font-size:.9rem;line-height:1.3}
+  .row .nm small{display:block;font-size:.68rem;color:#556;font-family:"Times New Roman",serif;margin-top:.1rem}
+  .row .pr{flex:none;text-align:right;font-size:.72rem;line-height:1.3;color:#333}
+  .row .pr b{display:block;font-size:1.05rem;color:var(--red);font-family:ui-monospace,monospace}
+  .row.sel{background:var(--navy);border-color:#001;color:#fff}
+  .row.sel .pr,.row.sel .nm small{color:#cfe0ff}
+  .row.sel .pr b{color:#ffe600}
+  .row:active{filter:brightness(.95)}
+
+  /* 份數 */
+  .copies{display:flex;align-items:center;justify-content:center;gap:.9rem;
+          background:linear-gradient(180deg,#ffb347,#ef8a1c);border-radius:8px;padding:.5rem;
+          border:1px solid #b0680f}
+  .copies span{font-size:.8rem}
+  .copies button{width:2.6rem;height:2.6rem;border-radius:8px;border:2px solid #0a3a6b;
+                 background:linear-gradient(180deg,#8fd0f7,#2a6fb8);color:#fff;font-size:1.2rem;cursor:pointer}
+  .copies .v{background:var(--yellow);border:1px solid #666;border-radius:6px;color:var(--red);
+             font-size:1.4rem;min-width:3rem;text-align:center;font-family:ui-monospace,monospace;padding:.15rem}
+
+  /* 登入 */
+  .field{background:#eef0ff;border:2px solid #445;border-radius:6px;padding:.45rem .6rem;cursor:pointer}
+  .field.on{border-color:#c40;background:#fff;box-shadow:0 0 0 3px #ffdf3a}
+  .field label{display:block;font-size:.68rem;color:#334;line-height:1.25}
+  .field .v{font-size:1.5rem;letter-spacing:.08em;font-family:ui-monospace,monospace;min-height:1.7rem;color:#111}
+  .field .v i{opacity:.3;font-style:normal}
+  .pad{display:grid;gap:.3rem}
+  .pad.abc{grid-template-columns:repeat(7,1fr)}
+  .pad.num{grid-template-columns:repeat(3,1fr)}
+  .key{background:#fff;border:2px solid #333;border-radius:5px;font-family:inherit;font-weight:700;
+       font-size:1.15rem;padding:.5rem 0;cursor:pointer}
+  .key:active{background:#dcdcdc}
+  .key.fn{font-size:.68rem;color:#0a3aa0;line-height:1.15}
+  .key.fn.clr{color:var(--red)}
+
+  /* 金額 */
+  .payline{border:2px solid #2a2a6a;border-radius:4px;color:var(--red);font-size:1.15rem;
+           font-weight:700;text-align:center;padding:.5rem}
+  .amt{display:grid;grid-template-columns:1fr 6.5rem;gap:.5rem .8rem;align-items:center}
+  .amt .lb{color:var(--red);font-size:1.05rem;line-height:1.15;text-align:right}
+  .amt .lb small{display:block;font-size:.62rem;font-family:"Times New Roman",serif}
+  .amt .vl{background:var(--yellow);border:1px solid #777;border-radius:4px;text-align:center;
+           font-size:1.5rem;font-family:ui-monospace,monospace;padding:.15rem}
+  .coins{display:flex;gap:.6rem;justify-content:center;margin-top:.2rem}
+  .coin{width:4rem;height:4rem;border-radius:50%;border:3px solid #8a7a2a;cursor:pointer;
+        background:radial-gradient(circle at 34% 30%,#fff6c9,#d9bf5a 60%,#a8902f);
+        color:#4a3a00;font-family:inherit;font-weight:700;font-size:1.1rem}
+  .coin:active{transform:translateY(2px)}
+  .coin[disabled]{opacity:.35;pointer-events:none}
+  .cashbtn{border:3px solid #8a6a06;border-radius:999px;
+           background:linear-gradient(180deg,#ffef9e,var(--gold) 48%,#c9990e);
+           color:var(--red);font-family:inherit;font-weight:700;padding:.8rem;cursor:pointer}
+  .cashbtn .zh{display:block;font-size:1.3rem}
+  .cashbtn .en{display:block;font-size:.72rem;font-family:"Times New Roman",serif}
+  .cashbtn.done{filter:grayscale(.5);opacity:.65}
+
+  .box{background:rgba(255,255,255,.72);border:1px solid #6a8a6a;border-radius:8px;padding:.7rem .8rem}
+  .box dl{margin:0;display:grid;grid-template-columns:5.5rem 1fr;gap:.35rem .5rem;font-size:.85rem}
+  .box dt{color:#345;text-align:right}
+  .box dd{margin:0;color:#111;font-weight:700;word-break:break-all}
+
+  /* ---------- 動作列 ---------- */
+  .actions{flex:none;display:flex;gap:.6rem;padding:.55rem .7rem calc(.55rem + var(--safe-b));
+           background:rgba(0,0,0,.14);z-index:6}
+  .btn{flex:1;border:3px solid #0d3b6b;border-radius:999px;font-family:inherit;cursor:pointer;
+       background:linear-gradient(180deg,#93d2f8,#3b83c9 48%,#1a4f8c);
+       color:#fff;text-shadow:1px 1px 2px #000;padding:.55rem .4rem;
+       box-shadow:inset 0 3px 4px rgba(255,255,255,.4),0 2px 4px rgba(0,0,0,.3)}
+  .btn .zh{display:block;font-size:1.05rem;font-weight:700;letter-spacing:.08em}
+  .btn .en{display:block;font-size:.65rem;font-family:"Times New Roman",serif}
+  .btn.go{background:linear-gradient(180deg,#dda6ef,#9b4fc0 48%,#71308f);border-color:#4d1e63;flex:1.35}
+  .btn:active{transform:translateY(2px);filter:brightness(.93)}
+  .btn[disabled]{opacity:.4;pointer-events:none}
+
+  /* ---------- 覆蓋層（處理中） ---------- */
+  .overlay{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;
+           background:linear-gradient(160deg,var(--green1),var(--green2) 58%,var(--green3))}
+  .overlay .msg{text-align:center;color:var(--red);line-height:1.7;padding:1rem}
+  .overlay .zh{font-size:1.5rem;font-weight:700}
+  .overlay .en{font-size:1.05rem;font-family:"Times New Roman",serif}
+  .dots{margin-top:1rem;display:flex;gap:.5rem;justify-content:center}
+  .dots i{width:.6rem;height:.6rem;border-radius:50%;background:var(--red);animation:bl 1s infinite}
+  .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+  @keyframes bl{0%,100%{opacity:.25}50%{opacity:1}}
+
+  /* ---------- 提示 ---------- */
+  .toast{position:absolute;left:50%;bottom:5.2rem;transform:translateX(-50%);
+         background:rgba(0,0,0,.82);color:#fff;font-size:.8rem;padding:.5rem .9rem;border-radius:999px;
+         z-index:9;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+  .toast.on{opacity:1}
+  .swipe{text-align:center;color:#0a4a0a;font-size:.7rem;opacity:.75;margin-top:auto;padding-top:.5rem}
+  .swipe span{display:inline-block;animation:sw 1.8s ease-in-out infinite}
+  @keyframes sw{0%,100%{transform:translateX(0)}50%{transform:translateX(-8px)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><b>校園多媒體服務系統</b><small>Campus Self-Service Kiosk</small></div>
+    <div class="cd"><em>剩下時間</em><b id="cd">600</b></div>
+    <button class="eject" id="eject">退幣<br>refund</button>
+  </div>
+  <div class="rail"><i id="rail"></i></div>
+  <div class="order" id="orderbar">
+    <table><col class="a"><col class="b"><col class="c">
+      <tr><th>申請項目</th><th>份數</th><th>金額</th></tr>
+      <tr><td id="oNm"></td><td id="oCp"></td><td id="oAm"></td></tr>
+    </table>
+  </div>
+  <div class="stage" id="stage"></div>
+  <div class="actions" id="actions"></div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const stage=$('#stage'), actions=$('#actions'), toastEl=$('#toast');
+
+const ITEMS=[
+  {n:'中文歷年成績表',                                p:15, note:'立即取件',  steps:[]},
+  {n:'中文成績名次證明書',                            p:20, note:'立即列印',  steps:['rank','term']},
+  {n:'學生證補發(繳費暨填單後臨櫃辦理)',              p:200,note:'3個工作天', steps:[]},
+  {n:'英文成績單(領取後至櫃台加蓋鋼印)',              p:20, note:'立即取件',  steps:['term']},
+  {n:'中文在學證明書',                                p:20, note:'立即取件',  steps:['term']},
+  {n:'英文在學證明書(領取後至櫃台加蓋鋼印)',          p:20, note:'立即取件',  steps:['term']},
+  {n:'中英文畢業證(明)書影本加蓋關防或鋼印(不含影本)',p:10, note:'3個工作天', steps:[]},
+  {n:'成績單之信封彌封(不含信封)',                    p:5,  note:'臨櫃辦理',  steps:[]},
+  {n:'中文學期成績單',                                p:15, note:'立即取件',  steps:['term']},
+  {n:'規整加權成績名次證明書(限特定獎學金使用)',      p:20, note:'立即列印',  steps:['rank','term']},
+  {n:'預期畢業(在學)證明(限境外生寒暑假居留證申請用)',p:20, note:'1個工作天', steps:['term']}
+];
+const RANKS=[
+  ['當學期班級名次','Single semester ranking in class'],
+  ['當學期分組名次','Single semester ranking in track'],
+  ['當學期系科所名次','Single semester ranking in department'],
+  ['在校各學期班級名次','ALL semesters class ranking in school'],
+  ['在校各學期分組名次','ALL semesters track ranking in school'],
+  ['在校各學期系科所名次','ALL semesters department ranking in school'],
+  ['畢業班級名次','Graduatian class ranking'],
+  ['畢業分組名次','Graduatian track ranking'],
+  ['畢業系科所名次','Graduatian department ranking']
+];
+const TERMS=['114^2^資工四^在學','114^1^資工四^在學','113^2^資工三^在學',
+             '113^1^資工三^在學','112^2^資工二^在學','112^1^資工二^在學'];
+
+let S, tick=null, ovTimer=null, animating=false, drag=null;
+
+function reset(){
+  S={view:'lang',id:'',dob:'',focus:'id',name:'王小明',
+     item:null,copies:1,rank:null,term:'',cash:false,paid:0,cd:600};
+  clearInterval(tick); tick=null;
+  clearTimeout(ovTimer);
+  stage.querySelectorAll('.overlay').forEach(o=>o.remove());
+  stage.innerHTML=''; stage.appendChild(build('lang'));
+  chrome();
+}
+function startTick(){
+  if(tick) return;
+  tick=setInterval(()=>{
+    if(--S.cd<=0){ reset(); return; }
+    $('#cd').textContent=S.cd;
+  },1000);
+}
+function toast(t){
+  toastEl.textContent=t; toastEl.classList.add('on');
+  clearTimeout(toast._t); toast._t=setTimeout(()=>toastEl.classList.remove('on'),1600);
+}
+const price = () => S.item==null ? 0 : ITEMS[S.item].p*S.copies;
+
+/* ---------- 線性流程 ---------- */
+function flow(){
+  const a=['lang','role','login','items'];
+  if(S.item!=null){
+    const st=ITEMS[S.item].steps;
+    if(st.includes('rank')) a.push('rank');
+    if(st.includes('term')) a.push('term');
+  }
+  return a.concat(['confirm','pay','done']);
+}
+const idx = () => flow().indexOf(S.view);
+
+// 可不可以往 dir 走；不行就回傳擋下來的理由
+function gate(dir){
+  const f=flow(), i=idx(), t=f[i+dir];
+  if(!t) return {ok:false};
+  if(dir<0 && (S.view==='lang'||S.view==='done')) return {ok:false};
+  if(dir>0){
+    if(S.view==='login' && !(S.id&&S.dob)) return {ok:false,why:'請輸入學號與出生年月日'};
+    if(S.view==='items' && S.item==null)   return {ok:false,why:'請先選擇申請項目'};
+    if(S.view==='rank'  && S.rank==null)   return {ok:false,why:'請選擇名次種類'};
+    if(S.view==='term'  && !S.term)        return {ok:false,why:'請選擇申請的學年期'};
+    if(S.view==='confirm'&& !S.cash)       return {ok:false,why:'請先按下『現金』'};
+    if(S.view==='pay'   && S.paid<price()) return {ok:false,why:'投入金額不足'};
+  }
+  return {ok:true,to:t};
+}
+
+// 進入某一步之前要跑的機台訊息
+const OVERLAYS={
+  items:[['認證處理中，請稍候...','Processing, please wait.']],
+  confirm:[['資料處理中，請稍候...','In data processing']],
+  done:[['檢查投入金額，請稍候...','Check Insert coin...'],
+        ['扣款處理中，請稍候...','Cuts payment in processing...'],
+        ['寫資料庫中，請稍候...','Print the receipt...'],
+        ['成績單列印中...','Report print'],
+        ['報表列印成功...','Success']]
+};
+function overlay(list,done){
+  let i=0;
+  const ov=document.createElement('div'); ov.className='overlay';
+  stage.appendChild(ov);
+  (function next(){
+    if(i>=list.length){ ov.remove(); done(); return; }
+    ov.innerHTML=`<div class="msg"><div class="zh">${list[i][0]}</div>
+      <div class="en">${list[i][1]}</div><div class="dots"><i></i><i></i><i></i></div></div>`;
+    i++; ovTimer=setTimeout(next,1250);
+  })();
+}
+
+/* ---------- 滑動 ---------- */
+function slide(to,dir,after){
+  animating=true;
+  const cur=stage.querySelector('.card'), nxt=build(to), w=stage.clientWidth;
+  nxt.style.transform=`translateX(${dir*w}px)`;
+  stage.appendChild(nxt);
+  requestAnimationFrame(()=>{
+    cur.classList.add('anim'); nxt.classList.add('anim');
+    cur.style.transform=`translateX(${-dir*w}px)`;
+    nxt.style.transform='translateX(0)';
+    setTimeout(()=>{
+      cur.remove(); nxt.classList.remove('anim'); nxt.style.transform='';
+      animating=false; after&&after();
+    },270);
+  });
+}
+function go(dir){
+  if(animating) return;
+  const g=gate(dir);
+  if(!g.ok){ if(g.why) toast(g.why); return; }
+  const run=()=>{ S.view=g.to; slide(g.to,dir,chrome); chrome(); };
+  if(dir>0 && OVERLAYS[g.to]) overlay(OVERLAYS[g.to],run); else run();
+}
+
+stage.addEventListener('pointerdown',e=>{
+  if(animating||stage.querySelector('.overlay')) return;
+  drag={x:e.clientX,y:e.clientY,lock:null,dir:0,nb:null,dx:0,cur:stage.querySelector('.card')};
+});
+stage.addEventListener('pointermove',e=>{
+  if(!drag) return;
+  const dx=e.clientX-drag.x, dy=e.clientY-drag.y, w=stage.clientWidth;
+  if(drag.lock===null){
+    if(Math.abs(dx)<10&&Math.abs(dy)<10) return;
+    drag.lock = Math.abs(dx)>Math.abs(dy)*1.3 ? 'x':'y';
+    if(drag.lock==='x') stage.setPointerCapture(e.pointerId);
+  }
+  if(drag.lock!=='x') return;
+  const dir = dx<0 ? 1 : -1;
+  if(dir!==drag.dir){
+    if(drag.nb){drag.nb.remove(); drag.nb=null;}
+    drag.dir=dir;
+    const g=gate(dir);
+    if(g.ok){ drag.nb=build(g.to); stage.appendChild(drag.nb); }
+    drag.why = g.why;
+  }
+  drag.dx = drag.nb ? dx : dx*0.22;          // 走不了就給阻尼
+  drag.cur.style.transform=`translateX(${drag.dx}px)`;
+  if(drag.nb) drag.nb.style.transform=`translateX(${drag.dx+dir*w}px)`;
+});
+function endDrag(){
+  if(!drag) return;
+  const d=drag; drag=null;
+  if(d.lock!=='x'){ return; }
+  const w=stage.clientWidth, pass = d.nb && Math.abs(d.dx)>w*0.26;
+  if(d.nb) d.nb.remove();
+  d.cur.classList.add('anim'); d.cur.style.transform='';
+  setTimeout(()=>d.cur.classList.remove('anim'),270);
+  if(pass) go(d.dir);
+  else if(d.nb===null && d.why && Math.abs(d.dx)>16) toast(d.why);
+}
+stage.addEventListener('pointerup',endDrag);
+stage.addEventListener('pointercancel',endDrag);
+
+/* ---------- 外框（倒數 / 進度 / 訂單 / 按鈕）---------- */
+function chrome(){
+  const f=flow(), i=idx();
+  $('#rail').style.width = ((i+1)/f.length*100)+'%';
+  $('#cd').textContent = S.cd;
+  if(S.view==='lang'){ clearInterval(tick); tick=null; S.cd=600; $('#cd').textContent=600; }
+  else startTick();
+
+  const on = S.item!=null && i>=3;
+  $('#orderbar').classList.toggle('on',on);
+  if(on){ $('#oNm').textContent=ITEMS[S.item].n; $('#oCp').textContent=S.copies; $('#oAm').textContent=price(); }
+
+  const cfg={
+    lang:   null,
+    role:   {back:'重新開始'},
+    login:  {back:'回上一頁',next:'確 定'},
+    items:  {back:'回上一頁',next:'確 定'},
+    rank:   {back:'回上一頁',next:'確 定'},
+    term:   {back:'回上一頁',next:'確 定'},
+    confirm:{back:'回上一頁',next:'確 定'},
+    pay:    {back:'回上一頁',next:'確 定'},
+    done:   null
+  }[S.view];
+
+  actions.innerHTML = !cfg ? '' : `
+    <button class="btn" data-nav="-1"><span class="zh">${cfg.back}</span><span class="en">Back</span></button>
+    ${cfg.next?`<button class="btn go" data-nav="1"><span class="zh">${cfg.next}</span><span class="en">Enter</span></button>`:''}`;
+  actions.style.display = cfg ? 'flex' : 'none';
+}
+actions.addEventListener('click',e=>{
+  const b=e.target.closest('[data-nav]'); if(!b) return;
+  const d=+b.dataset.nav;
+  if(d<0 && S.view==='role'){ reset(); return; }
+  go(d);
+});
+$('#eject').addEventListener('click',()=>{ toast('已退幣，交易取消'); setTimeout(reset,500); });
+
+/* ---------- 各步驟畫面 ---------- */
+function build(v){
+  const c=document.createElement('div'); c.className='card';
+  c.innerHTML=VIEW[v]();
+  wire(c,v);
+  return c;
+}
+const swipeHint = t => `<div class="swipe"><span>‹‹</span> ${t} <span>››</span></div>`;
+
+const VIEW={
+lang:()=>`
+  <div class="h1"><div class="zh">請選擇語言</div><div class="en">Please select a language</div></div>
+  <div class="poster"></div>
+  <div class="big">
+    <button class="bigbtn" data-go><span class="zh">中文版</span><span class="en">(Chinese)</span></button>
+    <button class="bigbtn" data-go><span class="zh">英文版</span><span class="en">(English)</span></button>
+  </div>
+  ${swipeHint('向左滑動可進入下一步')}`,
+
+role:()=>`
+  <div class="h1"><div class="zh">請選擇使用者身分</div><div class="en">Please select your identity</div></div>
+  <div class="poster"></div>
+  <div class="big">
+    <button class="bigbtn" data-go><span class="zh">學生 / 校友</span><span class="en">Student / Alumnus</span></button>
+    <button class="bigbtn" data-go><span class="zh">教職員工</span><span class="en">Staff</span></button>
+  </div>
+  ${swipeHint('左右滑動切換步驟')}`,
+
+login:()=>`
+  <div class="h1"><div class="zh">請輸入『學號』和『出生年月日』</div>
+    <div class="en">Please key-in StuID and Birthday</div></div>
+  <div class="field ${S.focus==='id'?'on':''}" data-f="id">
+    <label>身分證字號(Identity Number) 或 學號(StuID)</label>
+    <div class="v">${S.id||'<i>點此輸入</i>'}</div>
+  </div>
+  <div class="field ${S.focus==='dob'?'on':''}" data-f="dob">
+    <label>西元出生年月日 8 碼 Date of Birth(yyyymmdd)</label>
+    <div class="v">${S.dob||'<i>點此輸入</i>'}</div>
+  </div>
+  ${S.focus==='id'?`<div class="pad abc">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+      .map(k=>`<button class="key" data-k="${k}">${k}</button>`).join('')}</div>`:''}
+  <div class="pad num">
+    ${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" data-k="${n}">${n}</button>`).join('')}
+    <button class="key fn" data-k="BS">倒退<br>Back</button>
+    <button class="key" data-k="0">0</button>
+    <button class="key fn clr" data-k="CLR">清除<br>Clear</button>
+  </div>
+  <div class="lead">demo 不驗證，隨便輸入即可</div>`,
+
+items:()=>`
+  <div class="h1"><div class="zh">${S.id} ${S.name}，請選擇申請項目</div>
+    <div class="en">Please select your request type.</div></div>
+  <div class="list">${ITEMS.map((it,i)=>`
+    <div class="row ${S.item===i?'sel':''}" data-item="${i}">
+      <div class="nm">${it.n}<small>${it.note}</small></div>
+      <div class="pr"><b>${it.p}</b>元</div>
+    </div>`).join('')}</div>
+  <div class="copies">
+    <button data-cp="-1">▼</button>
+    <div style="text-align:center"><div class="v">${S.copies}</div><span>份數 copies</span></div>
+    <button data-cp="1">▲</button>
+  </div>`,
+
+rank:()=>`
+  <div class="h1"><div class="zh">請選擇名次種類</div><div class="en">Please select ranking type</div></div>
+  <div class="list">${RANKS.map((r,i)=>`
+    <div class="row ${S.rank===i?'sel':''}" data-rank="${i}">
+      <div class="nm">${r[0]}<small>${r[1]}</small></div>
+    </div>`).join('')}</div>`,
+
+term:()=>`
+  <div class="h1"><div class="zh">請選擇申請的學年期</div>
+    <div class="en">Please select years and semesters.</div></div>
+  <div class="list">${TERMS.map(t=>`
+    <div class="row ${S.term===t?'sel':''}" data-term="${t}">
+      <div class="nm" style="font-family:ui-monospace,monospace">${t}</div>
+    </div>`).join('')}</div>`,
+
+confirm:()=>`
+  <div class="h1"><div class="zh">請確認申請內容</div><div class="en">Please confirm your request</div></div>
+  <div class="box"><dl>
+    <dt>申請人</dt><dd>${S.id} ${S.name}</dd>
+    <dt>申請項目</dt><dd>${ITEMS[S.item].n}</dd>
+    ${S.rank!=null?`<dt>名次種類</dt><dd>${RANKS[S.rank][0]}</dd>`:''}
+    ${S.term?`<dt>學年期</dt><dd>${S.term}</dd>`:''}
+    <dt>份數</dt><dd>${S.copies} 份</dd>
+    <dt>應繳金額</dt><dd style="color:#c40000">${price()} 元</dd>
+  </dl></div>
+  <button class="cashbtn ${S.cash?'done':''}" data-cash>
+    <span class="zh">${S.cash?'已選擇：現金':'現　金'}</span><span class="en">Cash</span></button>
+  <div class="lead">請按下『現金』後再投幣</div>`,
+
+pay:()=>`
+  <div class="payline">請投幣或輸入紙鈔！</div>
+  <div class="amt">
+    <div class="lb">應繳金額<small>Amount payable</small></div><div class="vl">${price()}</div>
+    <div class="lb">投入金額<small>Investment amount</small></div><div class="vl">${S.paid}</div>
+  </div>
+  <div class="coins">
+    <button class="coin" data-coin="5">5</button>
+    <button class="coin" data-coin="10">10</button>
+    <button class="coin" data-coin="50">50</button>
+  </div>
+  <div class="lead">※ 勿投入 1 元（易當機）<br>
+    ${S.paid>=price()?'金額已足，按「確定」或向左滑動':'尚差 '+(price()-S.paid)+' 元'}</div>`,
+
+done:()=>`
+  <div class="h1"><div class="zh" style="color:#c40000">報表列印成功</div><div class="en">Success</div></div>
+  <div class="box"><dl>
+    <dt>申請項目</dt><dd>${ITEMS[S.item].n}</dd>
+    <dt>份數</dt><dd>${S.copies} 份</dd>
+    <dt>實收</dt><dd>${S.paid} 元</dd>
+    <dt>找零</dt><dd>${S.paid-price()} 元</dd>
+  </dl></div>
+  <div class="lead">請選擇是否繼續申請？<br>Please choose whether to continue to apply?<br>
+    ＊＊使用悠遊卡交易時，記得拿出卡片再交易＊＊</div>
+  <div class="big">
+    <button class="bigbtn" data-again><span class="zh">繼 續</span><span class="en">Continue</span></button>
+    <button class="bigbtn" data-end><span class="zh">結 束</span><span class="en">End</span></button>
+  </div>`
+};
+
+/* ---------- 事件綁定 ---------- */
+function repaint(){
+  const cur=stage.querySelector('.card');
+  const n=build(S.view);
+  cur.replaceWith(n);
+  chrome();
+}
+function wire(c,v){
+  c.addEventListener('click',e=>{
+    const t=e.target.closest('[data-go],[data-f],[data-k],[data-item],[data-cp],[data-rank],[data-term],[data-cash],[data-coin],[data-again],[data-end]');
+    if(!t) return;
+    const d=t.dataset;
+    if('go'   in d){ go(1); return; }
+    if('f'    in d){ S.focus=d.f; repaint(); return; }
+    if('k'    in d){
+      const k=d.k, f=S.focus;
+      if(k==='CLR') S[f]='';
+      else if(k==='BS') S[f]=S[f].slice(0,-1);
+      else if(/^[A-Z]$/.test(k)){ if(f==='id'&&S.id.length<10) S.id+=k; }
+      else if(S[f].length < (f==='dob'?8:10)) S[f]+=k;
+      repaint(); return;
+    }
+    if('item' in d){ S.item=+d.item; S.rank=null; S.term=''; repaint(); return; }
+    if('cp'   in d){ S.copies=Math.min(9,Math.max(1,S.copies+ +d.cp)); repaint(); return; }
+    if('rank' in d){ S.rank=+d.rank; repaint(); return; }
+    if('term' in d){ S.term=d.term;  repaint(); return; }
+    if('cash' in d){ S.cash=true; repaint(); toast('已選擇現金，請投幣'); return; }
+    if('coin' in d){ S.paid+= +d.coin; repaint(); return; }
+    if('again'in d){ S.item=null;S.rank=null;S.term='';S.copies=1;S.cash=false;S.paid=0;
+                     S.view='items'; slide('items',-1,chrome); chrome(); return; }
+    if('end'  in d){ reset(); return; }
+  });
+}
+
+reset();
+})();
+</script>
+</body>
+</html>

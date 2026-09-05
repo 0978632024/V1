@@ -1,0 +1,436 @@
+<title>BUILDMODE 交件指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap">
+
+<style>
+:root{
+  --ink:#191d26;
+  --ink-soft:#4a5261;
+  --ink-faint:#7b8494;
+  --ground:#f6f5f2;
+  --card:#fffefc;
+  --line:#dfdcd4;
+  --line-soft:#eae7e0;
+  --accent:#0b6e8c;
+  --accent-soft:#e3f0f4;
+  --bad:#a83226;
+  --bad-soft:#f9ebe8;
+  --good:#1f6b46;
+  --good-soft:#e8f2ec;
+  --warn:#8a5a10;
+  --warn-soft:#f8f0e2;
+  --shadow:0 1px 2px rgba(25,29,38,.05), 0 8px 24px -16px rgba(25,29,38,.18);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#eceae5;
+    --ink-soft:#a8afbb;
+    --ink-faint:#767e8b;
+    --ground:#14161b;
+    --card:#1c1f26;
+    --line:#31353f;
+    --line-soft:#272b33;
+    --accent:#5ec2e0;
+    --accent-soft:#17313b;
+    --bad:#f0897c;
+    --bad-soft:#33201d;
+    --good:#7fc9a1;
+    --good-soft:#1a2b23;
+    --warn:#e0b268;
+    --warn-soft:#2e2618;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#eceae5;
+  --ink-soft:#a8afbb;
+  --ink-faint:#767e8b;
+  --ground:#14161b;
+  --card:#1c1f26;
+  --line:#31353f;
+  --line-soft:#272b33;
+  --accent:#5ec2e0;
+  --accent-soft:#17313b;
+  --bad:#f0897c;
+  --bad-soft:#33201d;
+  --good:#7fc9a1;
+  --good-soft:#1a2b23;
+  --warn:#e0b268;
+  --warn-soft:#2e2618;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"Noto Sans TC","Hiragino Sans","Microsoft JhengHei",system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:44rem;
+  margin:0 auto;
+  padding:clamp(1.25rem,4vw,3rem) clamp(1.1rem,4vw,2rem) 4rem;
+  display:flex;
+  flex-direction:column;
+  gap:clamp(2rem,5vw,3.25rem);
+}
+
+.tag{
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-weight:500;
+  font-size:.7rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-variant-numeric:tabular-nums;
+}
+
+header{display:flex;flex-direction:column;gap:1rem}
+.eyebrow{color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:.7rem}
+h1{
+  font-family:"Noto Serif TC",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(1.85rem,6.5vw,2.6rem);
+  line-height:1.25;
+  letter-spacing:-.01em;
+  margin:0;
+  text-wrap:balance;
+}
+.lede{margin:0;color:var(--ink-soft);font-size:1.03rem}
+.lede b{color:var(--ink);font-weight:500}
+
+.action{
+  display:flex;flex-direction:column;gap:.9rem;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:4px;
+  box-shadow:var(--shadow);
+  padding:1.25rem;
+}
+.action-slot{
+  display:flex;flex-wrap:wrap;align-items:center;gap:.75rem;
+  border:1.5px dashed var(--accent);
+  border-radius:3px;
+  background:var(--accent-soft);
+  padding:.85rem 1rem;
+  color:var(--accent);
+  font-weight:500;
+}
+a.action-slot{text-decoration:none;border-style:solid;cursor:pointer;transition:transform .12s ease}
+a.action-slot:hover{transform:translateY(-1px);background:var(--card)}
+a.action-slot:active{transform:translateY(0)}
+.action-note{margin:0;font-size:.92rem;color:var(--ink-soft)}
+.action-note b{color:var(--ink);font-weight:500}
+
+section{display:flex;flex-direction:column;gap:1.1rem}
+h2{
+  font-family:"Noto Serif TC",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(1.2rem,3.6vw,1.45rem);
+  line-height:1.4;
+  margin:0;
+  text-wrap:balance;
+  display:flex;align-items:baseline;gap:.6rem;
+}
+h2 .tag{color:var(--ink-faint);flex:none}
+p{margin:0}
+.muted{color:var(--ink-soft);font-size:.95rem}
+.muted b{color:var(--ink);font-weight:500}
+
+.qlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem;counter-reset:q}
+.qlist li{
+  counter-increment:q;
+  display:flex;align-items:baseline;gap:.85rem;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:.8rem 1rem;
+  font-weight:500;
+}
+.qlist li::before{
+  content:counter(q);
+  font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.8rem;
+  color:var(--accent);
+  flex:none;
+}
+
+.types{display:flex;flex-direction:column;gap:.9rem}
+.type{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-left:3px solid var(--line);
+  border-radius:3px;
+  padding:1.05rem 1.15rem;
+  display:flex;flex-direction:column;gap:.65rem;
+}
+.type.hero{border-left-color:var(--accent)}
+.type-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .8rem}
+.type-name{font-weight:700;font-size:1.05rem}
+.day{color:var(--ink-faint);flex:none}
+.type.hero .day{color:var(--accent)}
+.type-why{margin:0;font-size:.93rem;color:var(--ink-soft)}
+.type-why b{color:var(--ink);font-weight:500}
+.asks{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:.4rem}
+.asks li{
+  font-size:.82rem;
+  color:var(--ink-soft);
+  background:var(--ground);
+  border:1px solid var(--line-soft);
+  border-radius:2px;
+  padding:.18rem .5rem;
+}
+
+.grades{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.4rem}
+.grades li{
+  display:flex;align-items:baseline;gap:.7rem;
+  font-size:.9rem;
+  padding:.45rem .7rem;
+  border-radius:2px;
+  border-left:3px solid var(--line);
+  background:var(--ground);
+}
+.grades li.a{border-left-color:var(--bad);background:var(--bad-soft)}
+.grades li.b{border-left-color:var(--warn);background:var(--warn-soft)}
+.grades li.c{border-left-color:var(--ink-faint)}
+.grades .tag{flex:none}
+.grades li.a .tag{color:var(--bad)}
+.grades li.b .tag{color:var(--warn)}
+.grades li.c .tag{color:var(--ink-faint)}
+
+.warnhead{
+  display:flex;flex-direction:column;gap:.7rem;
+  border-top:2px solid var(--ink);
+  padding-top:1.1rem;
+}
+.warnhead .flag{color:var(--bad)}
+.thesis{
+  font-family:"Noto Serif TC",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(1.05rem,3.2vw,1.22rem);
+  line-height:1.6;
+  margin:0;
+  text-wrap:balance;
+}
+.pairs{display:flex;flex-direction:column;gap:1rem}
+.pair{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:.5rem;
+  border:1px solid var(--line);
+  border-radius:3px;
+  overflow:hidden;
+  background:var(--card);
+}
+.side{padding:.85rem 1rem;display:flex;flex-direction:column;gap:.45rem}
+.side .tag{display:flex;align-items:center;gap:.4rem}
+.side.no{background:var(--bad-soft)}
+.side.no .tag{color:var(--bad)}
+.side.yes{background:var(--good-soft)}
+.side.yes .tag{color:var(--good)}
+.quote{margin:0;font-size:.93rem;line-height:1.65}
+.side.no .quote{color:var(--ink-soft)}
+@media (min-width:40rem){
+  .pair{grid-template-columns:1fr 1fr;gap:0}
+  .side.yes{border-left:1px solid var(--line)}
+}
+
+.bound{
+  border:1px solid var(--line);
+  border-radius:3px;
+  padding:1.05rem 1.15rem;
+  display:flex;flex-direction:column;gap:.6rem;
+}
+.bound p{font-size:.95rem;color:var(--ink-soft)}
+.bound b{color:var(--ink);font-weight:500}
+
+footer{
+  border-top:1px solid var(--line);
+  padding-top:1.5rem;
+  display:flex;flex-direction:column;gap:.5rem;
+}
+footer .tag{color:var(--ink-faint)}
+.closer{
+  font-family:"Noto Serif TC",Georgia,serif;
+  font-weight:700;
+  font-size:clamp(1.02rem,3vw,1.18rem);
+  line-height:1.65;
+  margin:0;
+  text-wrap:balance;
+}
+.closer em{font-style:normal;color:var(--accent)}
+
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow tag">BUILDMODE GEN-AI HACKATHON 2026</div>
+    <h1>交件指南</h1>
+    <p class="lede">給 <b>星語</b>、<b>小恩</b>、<b>阿崴</b> 三位。你不需要裝任何東西、不需要 GitHub、不需要碰 git —— 打開瀏覽器填一張表單就好。</p>
+  </header>
+
+  <div class="action">
+    <a class="action-slot" href="https://docs.google.com/forms/d/e/1FAIpQLScT02fzkhoRSqfGVzx1ZgH7Zjsagnpq6f0MePyg1s6RHQ9MrQ/viewform" target="_blank" rel="noopener"><span class="tag">交件表單</span><span>點這裡開始填 →</span></a>
+    <p class="action-note">一次交一個主題。表單的必填欄位填不完整就送不出去，<b>所以你不會遇到「交了才被退回」</b>。</p>
+    <p class="action-note">交完請在群組貼一行：<b>「我交了什麼、哪一類」</b>。表單雖然會寄信給 A／B，但三天活動裡群組 @ 一下最可靠，不要省這一步。</p>
+  </div>
+
+  <section>
+    <h2><span class="tag">01</span>一定要回答的三個問題</h2>
+    <ol class="qlist">
+      <li>這是什麼？</li>
+      <li>要放提案哪一節？</li>
+      <li>資料來源是什麼？</li>
+    </ol>
+    <p class="muted">三天內會有幾十份文件。沒有這三個答案，我們分不出來該放哪、只能整份退掉 —— 表單設成必填就是為了讓你不用擔心這件事。</p>
+  </section>
+
+  <section>
+    <h2><span class="tag">02</span>你可以交三種東西</h2>
+    <p class="muted">表單第 2 題選一個，後面的問題會自動跟著換。下面列的是每一類會問你什麼，可以先想好再開表單。<b>三類都不是的話選「其他」自己描述。</b></p>
+
+    <div class="types">
+      <div class="type">
+        <div class="type-head">
+          <span class="type-name">研究素材</span>
+          <span class="day tag">DAY 1–2</span>
+        </div>
+        <p class="type-why">競品、市場數據、使用者訪談。</p>
+        <ul class="asks">
+          <li>我查到什麼（一行）</li>
+          <li>具體內容，每條都要有出處</li>
+          <li>這對提案有什麼用（我的看法）</li>
+          <li>我查了但沒查到的</li>
+          <li>附件</li>
+        </ul>
+      </div>
+
+      <div class="type hero">
+        <div class="type-head">
+          <span class="type-name">QA 回報</span>
+          <span class="day tag">DAY 2–3 ・ 對名次貢獻最大</span>
+        </div>
+        <p class="type-why">把 demo 拿去玩，找出評審看到會出事的地方。這件事不需要任何權限，也不會弄壞任何東西。<b>請用電腦測</b> —— 評審看到的就是電腦畫面，手機測不到的問題比較多。</p>
+        <ul class="asks">
+          <li>裝置／瀏覽器</li>
+          <li>測哪個版本或網址</li>
+          <li>我做了什麼（一步一步）</li>
+          <li>我以為會發生什麼</li>
+          <li>實際發生了什麼</li>
+          <li>嚴重程度</li>
+          <li>截圖／錄影</li>
+          <li>我建議怎麼改</li>
+        </ul>
+        <ul class="grades">
+          <li class="a"><span class="tag">A 級</span><span>評審看到會當場出戲 —— 跑不起來、算錯、卡住、亂碼</span></li>
+          <li class="b"><span class="tag">B 級</span><span>難用，但不會壞</span></li>
+          <li class="c"><span class="tag">C 級</span><span>只是我覺得可以更好</span></li>
+        </ul>
+        <p class="type-why">三天內我們<b>只保證修 A 級</b>。B 級和 C 級照樣寫 —— 有空會修，也可能寫進提案的「下一步」那一節。</p>
+      </div>
+
+      <div class="type">
+        <div class="type-head">
+          <span class="type-name">提案段落</span>
+          <span class="day tag">DAY 2</span>
+        </div>
+        <p class="type-why">提案的任何一節都可以寫，<b>不用等人分配，重複也沒關係</b> —— 三個人寫同一節，我們就有三個版本可以挑。</p>
+        <ul class="asks">
+          <li>這一節唯一要說的一句話</li>
+          <li>內文，3–6 句，不要更長</li>
+          <li>如果只放一張圖或一個數字，放什麼</li>
+          <li>哪份研究素材支持這段</li>
+        </ul>
+      </div>
+
+      <div class="type">
+        <div class="type-head">
+          <span class="type-name">其他</span>
+          <span class="day tag">隨時</span>
+        </div>
+        <p class="type-why">上面三類都不是的話走這裡，自己描述那是什麼。</p>
+        <ul class="asks">
+          <li>那是什麼（自己描述類型）</li>
+          <li>內容</li>
+          <li>附件連結</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="warnhead">
+      <div class="tag flag">最重要的一段</div>
+      <h2>用 ChatGPT / Gemini 的注意事項</h2>
+      <p class="thesis">不要交「AI 一次生出來的完整章節」。那種東西讀起來每句都對，但沒有一句能用在提案裡 —— 我們只能整段重寫，你這份就白做了。</p>
+      <p class="muted">要交的是<b>有出處</b>的東西：具體的數字、名稱、報價，或真人說過的話。</p>
+    </div>
+
+    <div class="pairs">
+      <div class="pair">
+        <div class="side no">
+          <span class="tag">✕ 會被退</span>
+          <p class="quote">「AI 助理市場正快速成長，預計未來幾年將持續擴大。」</p>
+        </div>
+        <div class="side yes">
+          <span class="tag">✓ 能用</span>
+          <p class="quote">「Gartner 2025/11 報告：XX 市場 2026 年 $X 億，年增 X%。」＋ 連結</p>
+        </div>
+      </div>
+
+      <div class="pair">
+        <div class="side no">
+          <span class="tag">✕ 會被退</span>
+          <p class="quote">「主要競品包括多家國內外廠商。」</p>
+        </div>
+        <div class="side yes">
+          <span class="tag">✓ 能用</span>
+          <p class="quote">「競品 A：月費 $299、缺 XX 功能。競品 B：免費但要自架。」（我實際註冊試用過）</p>
+        </div>
+      </div>
+
+      <div class="pair">
+        <div class="side no">
+          <span class="tag">✕ 會被退</span>
+          <p class="quote">「使用者普遍希望操作能更簡單。」</p>
+        </div>
+        <div class="side yes">
+          <span class="tag">✓ 能用</span>
+          <p class="quote">「我問了 3 個在做這件事的人，其中 2 個說『每次都要重新設定一遍很煩』。」</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="muted"><b>AI 的正確用法是幫你整理與潤稿，不是幫你生內容。</b>先自己找到具體的數字、名稱、報價、真人說的話，再叫 AI 幫你排成表單要的格式。</p>
+  </section>
+
+  <section>
+    <h2><span class="tag">03</span>你不會碰到的東西</h2>
+    <div class="bound">
+      <p><b>demo 的程式碼</b>和<b>簡報主檔</b>由 A／B 收口。你交的東西在 A 或 B 看過之前，不會動到它們任何一個字。</p>
+      <p>想改 demo 的哪裡 → <b>寫 QA 回報，不要自己動手。</b>這不是不信任你 —— 是三天內任何人直接改 demo，都可能讓它在評審面前跑不起來。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="tag">04</span>看大家在幹嘛</h2>
+    <div class="bound">
+      <p><a href="board.html">戰情看板</a> —— 五個人現在各自在做什麼，開著放旁邊就好，會自己更新。</p>
+      <p>你交件之後，你的角色會跳起來。<b>橘色格子＝今天的動作數，滿 5 格會升級換色。</b></p>
+    </div>
+  </section>
+
+  <footer>
+    <div class="tag">一句話總結</div>
+    <p class="closer">交<em>小、具體、有出處</em>的東西，一次一個主題。Day 2 開始用電腦把 demo 拿去玩，找出「評審看到會出戲」的問題 —— 那是你對名次貢獻最大的事。</p>
+  </footer>
+
+</div>

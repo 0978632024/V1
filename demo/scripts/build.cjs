@@ -1,0 +1,18 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const root=path.resolve(__dirname,'..');
+const read=name=>fs.readFileSync(path.join(root,'src',name),'utf8');
+const config=JSON.parse(read('machines.json'));
+const scripts=`globalThis.TT={machines:${JSON.stringify(config).replace(/</g,'\\u003c')}};\n`+['model.js','speech.js','swipe.js','app.js'].map(read).join('\n');
+new vm.Script(scripts);
+const html=read('shell.html').replace('/* STYLES */',read('styles.css')).replace('/* SCRIPTS */',()=>scripts);
+const dist=path.join(root,'dist'); fs.mkdirSync(dist,{recursive:true});
+fs.writeFileSync(path.join(dist,'index.html'),html);
+const hash=require('node:crypto').createHash('sha256').update(html).digest('hex').slice(0,12);
+const sw=`const CACHE='tapthrough-${hash}';
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.add('./index.html')).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('tapthrough-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||e.request.mode!=='navigate')return; const u=new URL(e.request.url); if(u.origin!==self.location.origin)return; e.respondWith(fetch(e.request).catch(()=>caches.open(CACHE).then(c=>c.match('./index.html'))));});`;
+fs.writeFileSync(path.join(dist,'sw.js'),sw);
+console.log('Built dist/index.html (self-contained, no external assets) and dist/sw.js');

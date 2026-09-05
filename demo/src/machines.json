@@ -1,0 +1,59 @@
+{
+  "ntut-document-kiosk": {
+    "machineId": "ntut-document-kiosk",
+    "machineName": "校園文件自動服務機",
+    "organization": "國立臺北科技大學",
+    "location": "校內位置【待填】",
+    "paymentMethod": ["cash"],
+    "timeoutSeconds": 600,
+    "physicalActions": {
+      "cash": "先按現金，才能投幣。",
+      "coins": "勿投 1 元，機器會當機。投幣口收 5、10、50 元硬幣，請一次投入一枚。",
+      "collect": "請取走文件、收據與找零。用悠遊卡的話，交易後記得拿出卡片。"
+    },
+    "screens": [
+      {"id":1,"name":"語言選擇","photos":"1"},
+      {"id":2,"name":"身分選擇","photos":"2"},
+      {"id":3,"name":"輸入身分","photos":"3–4"},
+      {"id":4,"name":"認證處理中","photos":"5"},
+      {"id":5,"name":"申請項目與份數","photos":"6–7"},
+      {"id":6,"name":"名次類型","photos":"8–9"},
+      {"id":7,"name":"學年期","photos":"10–11"},
+      {"id":8,"name":"確認清單","photos":"12"},
+      {"id":9,"name":"付款方式與資料處理","photos":"13–14"},
+      {"id":10,"name":"投幣與金額檢查","photos":"15–19"},
+      {"id":11,"name":"列印與收據處理","photos":"20–23"},
+      {"id":12,"name":"是否繼續申請","photos":"24"}
+    ],
+    "availableServices": [
+      {"id":"rank","name":"中文成績名次證明書","description":"立即列印 · R2 實測項目","price":20,"requiresSemester":true,"requiresRank":true,"maxCopies":5,"enabled":true},
+      {"id":"history","name":"中文歷年成績表","description":"立即取件","price":15,"requiresSemester":false,"maxCopies":5,"enabled":true},
+      {"id":"student-card","name":"學生證補發","description":"3 工作天 · 本次原型未提供","price":200,"requiresSemester":false,"maxCopies":1,"enabled":false},
+      {"id":"english","name":"英文成績單","description":"領取後須至櫃台加蓋鋼印","price":20,"requiresSemester":false,"maxCopies":5,"enabled":true},
+      {"id":"enrollment","name":"中文在學證明書","description":"在學文件","price":20,"requiresSemester":false,"maxCopies":5,"enabled":true},
+      {"id":"enrollment-en","name":"英文在學證明書","description":"領取後須至櫃台加蓋鋼印","price":20,"requiresSemester":false,"maxCopies":5,"enabled":true},
+      {"id":"diploma","name":"中英文畢業證（明）書影本加蓋關防或鋼印","description":"3 工作天 · 本次原型未提供","price":10,"requiresSemester":false,"maxCopies":5,"enabled":false},
+      {"id":"envelope","name":"成績單之信封彌封","description":"臨櫃辦理 · 本次原型未提供","price":5,"requiresSemester":false,"maxCopies":5,"enabled":false},
+      {"id":"semester-transcript","name":"中文學期成績單","description":"學期成績文件","price":15,"requiresSemester":true,"maxCopies":5,"enabled":true},
+      {"id":"weighted","name":"規整加權成績名次證明書","description":"限特定獎學金 · 本次原型未提供","price":20,"requiresSemester":true,"maxCopies":5,"enabled":false},
+      {"id":"expected","name":"預期畢業（在學）證明","description":"1 工作天 · 本次原型未提供","price":20,"requiresSemester":false,"maxCopies":5,"enabled":false}
+    ],
+    "rankTypes": ["當學期班級名次","當學期分組名次","當學期系科所名次","在校各學期班級名次","在校各學期分組名次","在校各學期系科所名次","畢業班級名次","畢業分組名次","畢業系科所名次"],
+    "semesters": ["114 學年度第 2 學期","114 學年度第 1 學期","113 學年度第 2 學期","115 學年度第 1 學期"],
+    "v1Ratios": {"language":{"x":0.8,"y":0.32},"confirm":{"x":0.78,"y":0.42},"cash":{"x":0.5,"y":0.63}},
+    "guidance": {
+      "LANGUAGE":{"A":"中文版按鈕離右緣【待填】公分，離上緣【待填】公分。","B":"先確認螢幕邊框。中文版在右側；沿邊框移動【待填】，再向內移動【待填】。"},
+      "ROLE":{"A":"學生／校友按鈕離右緣【待填】公分，離上緣【待填】公分。","B":"學生／校友按鈕在右側，沿邊框移動【待填】。"},
+      "AUTH":{"A":"機台確定按鈕離右緣【待填】公分，離下緣【待填】公分。","B":"機台確定按鈕在右下方，沿邊框移動【待填】。"},
+      "SERVICE":{"A":"申請項目離上緣【待填】公分。","B":"依名稱選擇文件，實體定位【待填】。"},
+      "COPIES":{"A":"份數控制離下緣【待填】公分。","B":"確認所需份數，實體定位【待填】。"},
+      "RANK":{"A":"名次選項離左緣【待填】公分，離上緣【待填】公分。","B":"請依名稱確認名次類型，實體定位【待填】。"},
+      "SEMESTER":{"A":"學年期選單離左緣【待填】公分，離上緣【待填】公分。","B":"學年期選單在畫面中間偏上，實體定位【待填】。"},
+      "REVIEW":{"A":"確定按鈕離右緣【待填】公分，離上緣【待填】公分。","B":"確認清單後選確定，實體定位【待填】。"},
+      "PAYMENT_METHOD":{"A":"現金按鈕離左緣【待填】公分，離上緣【待填】公分。","B":"現金按鈕在畫面中下方，實體定位【待填】。"},
+      "PAYMENT_WAITING":{"A":"投幣口距螢幕邊緣【待填】公分。","B":"投幣口在機身紙鈔入口附近，實體定位【待填】。"},
+      "PRINTING":{"A":"文件取出口離地【待填】公分。","B":"文件取出口在機身下方，沿機身移動【待填】。"},
+      "COMPLETED":{"A":"收據出口離地【待填】公分。","B":"請確認文件取出口與收據出口，實體定位【待填】。"}
+    }
+  }
+}
